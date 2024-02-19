@@ -36,6 +36,7 @@ if __name__ == "__main__":
     pp.pprint(phoenix_takeout_data)
 
     # Visualize data
+    bar_chart(state_data, x_label='State', y_label='Number of Businesses', title='Number of Businesses per State')
     bar_chart(num_biz_az, x_label='City', y_label='Number of Businesses', title='Number of Businesses per City in Arizona')
 
     # destroy the database (for testing purposes)

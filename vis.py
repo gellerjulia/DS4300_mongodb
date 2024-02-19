@@ -1,5 +1,6 @@
 # visualizations.py
 import matplotlib.pyplot as plt
+import math
 
 def bar_chart(data, x_label, y_label, title):
     x_values = [entry['_id'] for entry in data]
