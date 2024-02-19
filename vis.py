@@ -9,4 +9,5 @@ def bar_chart(data, x_label, y_label, title):
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
+    plt.xticks(rotation=15, ha='right')
     plt.show()
