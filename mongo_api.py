@@ -32,7 +32,7 @@ class MongoAPI:
             {"$group": {"_id": "$state", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}}
         ]
-        return list(self.collection.aggregate(pipeline))
+        print("businesses per state: ", list(self.collection.aggregate(pipeline)))
 
     def get_business_types(self):
         """
@@ -72,7 +72,7 @@ class MongoAPI:
 
         result = list(self.db.biz.aggregate(pipeline))
         return result
-    
+
     def businesses_with_takeout(self, city):
         """
         Q6: Get businesses of a city offering takeout, returning name and full address.
@@ -80,4 +80,39 @@ class MongoAPI:
         :return: List of dictionaries containing name and full address of businesses.
         """
         query = {"city": city, "attributes.Take-out": True}
-        return list(self.collection.find(query, {"name": 1, "full_address": 1}))
+        result = list(self.collection.find(query, {"name": 1, "full_address": 1}))
+        return f"{city} businesses offering takeout: ", result
+
+    def high_business_rating(self, city):
+        """
+        Get restaurants with 4+ rating in a city using aggregation pipeline.
+
+        :param city: The city to filter by.
+        :return: A tuple containing a list of restaurants and the total count.
+        """
+
+        result = [
+            {"$match": {"city": city, "stars": {"$gte": 4.0}, "categories": "Restaurants"}},
+            {"$group": {"_id": None, "count": {"$sum": 1}}},
+        ]
+
+        result = list(self.collection.aggregate(result))
+
+        # Projection to include only specified fields
+        projection = {"_id": 0, "city": 1, "stars": 1, "name": 1, "full_address": 1}
+        restaurants = list(self.collection.find({"city": city, "stars": {"$gte": 4.0}}, projection))
+
+        return restaurants
+
+
+    def businesses_kids(self, city):
+        """
+        Get businesses that are good with kids
+        """
+        result = [
+            {"$match": {"city": city, "attributes.Good for Kids": True}},
+            {"$project": {"name": "$name", "full_address": "$full_address", "categories": "$categories"}},
+        ]
+
+        result = list(self.collection.aggregate(result))
+        return result
