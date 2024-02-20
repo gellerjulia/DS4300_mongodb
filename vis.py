@@ -1,6 +1,10 @@
 # visualizations.py
 import matplotlib.pyplot as plt
+<<<<<<< HEAD
 import seaborn as sns
+=======
+import math
+>>>>>>> 604dbee2c8d00af4b72996f537982fd5188dab0b
 
 def bar_chart(data, x_label, y_label, title):
     x_values = [entry['_id'] for entry in data]
@@ -10,4 +14,5 @@ def bar_chart(data, x_label, y_label, title):
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
+    plt.xticks(rotation=15, ha='right')
     plt.show()

@@ -21,6 +21,24 @@ class MongoAPI:
         self.db = self.client[db_name]
         self.collection = self.db[collection_name]
 
+    def import_data(self, data):
+        """
+        Imports the data into the current database and collection.
+
+        params:
+        data: list of dict data
+        """
+        self.collection.insert_many(data)
+        
+    def destroy_db(self, db):
+        """
+        Destroys the given database.
+
+        params:
+        db: str name of database
+        """
+        self.client.drop_database(db)
+
     def businesses_per_state(self):
         """
         Q1: Get the number of businesses per state,
@@ -48,6 +66,14 @@ class MongoAPI:
         :param state:
         :return:
         """
+        match_criteria = {"state":state}
+        pipeline = [
+            {"$match": match_criteria},
+            {"$group": {"_id": "$city", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        result = list(self.db.biz.aggregate(pipeline))
+        return result
 
     def num_types_per_business(self, state=None, city=None):
         """
