@@ -50,29 +50,35 @@ class MongoAPI:
             {"$group": {"_id": "$state", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}}
         ]
-        print("businesses per state: ", list(self.collection.aggregate(pipeline)))
+        # print("businesses per state: ", list(self.collection.aggregate(pipeline)))
+        return list(self.collection.aggregate(pipeline))
 
     def get_business_types(self):
         """
-        Q2: Get a list of all different types of businesses.
+        Q2: Get a list of all different types of businesses with their count.
 
-        :return: List of distinct business types.
+        return: List of dictionaries containing business type and count.
         """
-        return self.collection.distinct("categories")
+        pipeline = [
+            {"$unwind": "$categories"},
+            {"$group": {"_id": "$categories", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        result = list(self.collection.aggregate(pipeline))
+        return result
 
-    def num_businesses_per_city(self, state):
+
+    def num_businesses_per_city(self):
         """
-        Q3: Get the number of businesses per city given a state
+        Q3: Get the number of businesses per city
         :param state:
         :return:
         """
-        match_criteria = {"state":state}
         pipeline = [
-            {"$match": match_criteria},
             {"$group": {"_id": "$city", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}}
         ]
-        result = list(self.db.biz.aggregate(pipeline))
+        result = list(self.collection.aggregate(pipeline))
         return result
 
     def num_types_per_business(self, state=None, city=None):
@@ -106,8 +112,19 @@ class MongoAPI:
         :return: List of dictionaries containing name and full address of businesses.
         """
         query = {"city": city, "attributes.Take-out": True}
-        result = list(self.collection.find(query, {"name": 1, "full_address": 1}))
-        return f"{city} businesses offering takeout: ", result
+        projection = {"name": 1, "categories": 1, "full_address": 1}
+        result = list(self.collection.find(query, projection))
+    
+        for business in result:
+            # get the first non "food" or "Restaurants" cateogry tag
+            cat = business.get("categories", [])
+            first_non_food_category = next((cat for cat in cat if cat.lower() not in {'food', 'restaurant'}), None)
+            business['Food type'] = first_non_food_category
+            business.pop("categories", None)
+            
+        print(result)
+        return result
+                    
 
     def high_business_rating(self, city):
         """
@@ -118,16 +135,15 @@ class MongoAPI:
         """
 
         result = [
-            {"$match": {"city": city, "stars": {"$gte": 4.0}, "categories": "Restaurants"}},
+            {"$match": {"city": city, "stars": {"$gte": 4.0, "$mod": [0.25, 0]}, "categories": "Restaurants"}},
             {"$group": {"_id": None, "count": {"$sum": 1}}},
         ]
 
-        result = list(self.collection.aggregate(result))
+        #result = list(self.collection.aggregate(result))
 
         # Projection to include only specified fields
         projection = {"_id": 0, "city": 1, "stars": 1, "name": 1, "full_address": 1}
         restaurants = list(self.collection.find({"city": city, "stars": {"$gte": 4.0}}, projection))
-
         return restaurants
 
 
@@ -135,10 +151,12 @@ class MongoAPI:
         """
         Get businesses that are good with kids
         """
-        result = [
-            {"$match": {"city": city, "attributes.Good for Kids": True}},
-            {"$project": {"name": "$name", "full_address": "$full_address", "categories": "$categories"}},
-        ]
-
-        result = list(self.collection.aggregate(result))
+        query = {"city": city, "attributes.Good for Kids": True}
+        projection = {"name": 1, "full_address": 1, "categories": 1}
+        result = list(self.collection.find(query, projection))
+        
+        print("Places that are good for kids: ")
+        print(result)
         return result
+    
+    
