@@ -1,4 +1,12 @@
-# main_script.py
+"""
+Julia Geller and Ceara Zhang
+DS4300 / HW3 Mongo Database
+Created 17 Feb 2024
+Updated: 20 Feb 2024
+
+main.py:
+
+"""
 from mongo_api import MongoAPI
 from vis import Visualizations
 import json
@@ -13,11 +21,10 @@ def explore_another_question():
 
 if __name__ == "__main__":
     # Initialize MongoDB API
- 
     api = MongoAPI(db_name='DS4300', collection_name='Yelp Dataset')
     # api = MongoAPI(db_name='yelp_db', collection_name='biz')
 
-     # import the data
+    # import the data
     yelp_data = []
     with open('data/yelp_academic_dataset_business.json', 'r') as json_file:
         # Iterate through each line in the file
@@ -43,14 +50,14 @@ if __name__ == "__main__":
         if choice == "1":
             # Get businesses per state
             state_data = api.businesses_per_state()
+            #TODO visualization for this
 
             #G et Number of businnesses for each type
             print("Types of businesses:")
             business_types = api.get_business_types()
-            Visualizations.heatmap(business_types)            
+            Visualizations.vis_wordcloud(business_types)            
 
             # Number of businesses per city
-            print("Number of businesses per city: ")
             bus_per_city = api.num_businesses_per_city()
             Visualizations.vis_bubble(bus_per_city)
     
@@ -59,13 +66,7 @@ if __name__ == "__main__":
             city = input("Enter the city: ")
             rating = api.high_business_rating(city)
             print(rating)
-            ratings = [entry['stars'] for entry in rating]
-            counts = Counter(ratings)
-            plt.bar(list(counts.keys()), list(counts.values()))
-            plt.xlabel('Stars')
-            plt.ylabel('Number of Restaurants')
-            plt.title('Restaurants with 4+ Stars')
-            plt.show()
+            Visualizations.vis_ratings(rating)
 
         elif choice == "3":
             # Get businesses with takeout in a city

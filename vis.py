@@ -5,6 +5,7 @@ import math
 from collections import Counter
 import plotly.express as px
 import pandas as pd
+from wordcloud import WordCloud
 
 class Visualizations: 
     def bar_chart(data, x_label, y_label, title):
@@ -18,6 +19,15 @@ class Visualizations:
         plt.xticks(rotation=15, ha='right')
         plt.show()
         
+    def vis_ratings(data):
+        ratings = [entry['stars'] for entry in data]
+        counts = Counter(ratings)
+        plt.bar(list(counts.keys()), list(counts.values()))
+        plt.xlabel('Stars')
+        plt.ylabel('Number of Restaurants')
+        plt.title('Restaurants with 4+ Stars')
+        plt.show()
+        
     def vis_bubble(data):
         cities = [entry['_id'] for entry in data[:50]]
         counts = [entry['count'] for entry in data[:50]]
@@ -28,20 +38,16 @@ class Visualizations:
         plt.xticks(rotation=45, ha='right')
         plt.show()
 
-    def heatmap(data):
-        business_types = [entry['_id'] for entry in data]
-        counts = [entry['count'] for entry in data]
+    def vis_wordcloud(data):
     
-        # Create a DataFrame for heatmap
-        heatmap_data = pd.DataFrame({'Business Type': business_types, 'Count': counts})
-    
-        # Plot the heatmap
-        sns.set(style="whitegrid")
-        plt.figure(figsize=(10, 8))
-        sns.barplot(x='Count', y='Business Type', data=heatmap_data, palette="viridis")
-        plt.title('Number of Businesses per Business Type')
-        plt.xlabel('Count')
-        plt.ylabel('Business Type')
+       # Generate the word cloud
+        wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies({entry['_id']: entry['count'] for entry in data})
+
+        # Display the word cloud using matplotlib
+        plt.figure(figsize=(10, 6))
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis('off')
+        plt.title(f'Word Cloud of Business Types')
         plt.show()
 
         
@@ -67,7 +73,8 @@ class Visualizations:
 
     def vis_kid_friendly_businesses(result, city):
         # Extract the first category from each business
-        categories = [entry.get('categories', [])[0] for entry in result]
+        categories = [entry.get('categories', [])[0] if len(entry.get('categories', [])) > 1 else 'N/A' for entry in result]
+
 
         # Count occurrences of each category
         counts = Counter(categories)
