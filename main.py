@@ -10,14 +10,16 @@ main.py:
 from mongo_api import MongoAPI
 from vis import Visualizations
 import json
-import pprint as pp
-from collections import Counter
-
-import matplotlib.pyplot as plt
 
 def explore_another_question():
-    return input("Do you want to explore another question? (yes/no): ").lower() == "yes"
-
+    while True:
+        answer = input("Do you want to explore another question? (yes/no): ").lower()
+        if answer == "yes":
+            return True
+        elif answer == "no":
+            return False
+        else:
+            print("Invalid input. Please enter 'yes' or 'no'.")
 
 if __name__ == "__main__":
     # Initialize MongoDB API
@@ -50,10 +52,9 @@ if __name__ == "__main__":
         if choice == "1":
             # Get businesses per state
             state_data = api.businesses_per_state()
-            #TODO visualization for this
-
-            #G et Number of businnesses for each type
-            print("Types of businesses:")
+            Visualizations.vis_bus_per_state(state_data)
+            
+            # Get Number of businesses for each type
             business_types = api.get_business_types()
             Visualizations.vis_wordcloud(business_types)            
 
@@ -64,22 +65,29 @@ if __name__ == "__main__":
         elif choice == "2":
             # 4+ rating restaurants
             city = input("Enter the city: ")
+            if city not in api.get_all_cities():
+                print("City is not included in the dataset.")
+                continue
             rating = api.high_business_rating(city)
-            print(rating)
             Visualizations.vis_ratings(rating)
 
         elif choice == "3":
             # Get businesses with takeout in a city
             city = input("Enter the city: ")
+            if city not in api.get_all_cities():
+                print("City is not included in the dataset.")
+                continue
             takeout = api.businesses_with_takeout(city)
             Visualizations.vis_food_types(takeout, city)
             
         elif choice == "4": 
             # Get businesses that are good with kids
             city = input("Enter the city: ")
+            if city not in api.get_all_cities():
+                print("City is not included in the dataset.")
+                continue
             kids = api.businesses_kids(city)
             Visualizations.vis_kid_friendly_businesses(kids, city)
-        
 
         else:
             print("Invalid choice. Please enter a number 1-4.")
