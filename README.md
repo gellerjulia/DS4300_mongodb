@@ -38,6 +38,6 @@ This Python script allows you to explore the Yelp Academic Dataset using MongoDB
 
 ## Author And Contributions
 
-Ceara Zhang - Ceara contributed by creating the API by coding the query functions in python and outputting various visualizations for different prompts to showcase the queried data. 
+Ceara Zhang - Ceara contributed by creating the API by coding the query functions in python and outputting various visualizations for different prompts to showcase the queried data. She also looked over all work. 
 
-Julia Geller - Julia contributed by choosing the dataset, declaring questions to explore the data with, and creating and documenting the Mongo queries and output results.
+Julia Geller - Julia contributed by choosing the dataset, declaring questions to explore the data with, and creating and documenting the Mongo queries and output results. She also looked over all work. 
