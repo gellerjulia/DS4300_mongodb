@@ -12,26 +12,28 @@ from collections import Counter
 from wordcloud import WordCloud
 
 class Visualizations: 
+    @staticmethod
+    def plot_bar(x, y, xlabel, ylabel, title, rotation='horizontal', color='skyblue'):
+        plt.bar(x, y, color=color)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.title(title)
+        plt.xticks(rotation=rotation)
+        plt.show()
+    
     def vis_bus_per_state(data): 
         """Bar chart showing number of businesses per state"""
         states = [entry['_id'] for entry in data]
         counts = [entry['count'] for entry in data]
-        
-        plt.bar(states, counts, color='skyblue')
-        plt.xlabel('State')
-        plt.ylabel('Number of Business')
-        plt.title('Number of Businesses per State')
-        plt.show()
+        Visualizations.plot_bar(states, counts, 'State', 'Number of Businesses per State', 'Number of Businesses per State')
         
     def vis_ratings(data):
         """Bar chart showing 4+ rating restaurants"""
         ratings = [entry['stars'] for entry in data]
         counts = Counter(ratings)
-        plt.bar(list(counts.keys()), list(counts.values()))
-        plt.xlabel('Stars')
-        plt.ylabel('Number of Restaurants')
-        plt.title('Restaurants with 4+ Stars')
-        plt.show()
+        
+        # Plotting
+        Visualizations.plot_bar(counts.keys(), list(counts.values()), 'Stars', 'Number of Restaurants', 'Restaurants with 4+ Stars')
         
     def vis_bubble(data):
         """Bubble chart showing cities with most businesses"""
@@ -46,10 +48,9 @@ class Visualizations:
 
     def vis_wordcloud(data):
         """Wordcloud showing business types"""
-       # Generate the word cloud
         wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies({entry['_id']: entry['count'] for entry in data})
 
-        # Display the word cloud using matplotlib
+        # Plotting
         plt.figure(figsize=(10, 6))
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
@@ -84,15 +85,10 @@ class Visualizations:
         counts = Counter(categories)
         
         # Select top categories and group the rest
-        top = dict(sorted(counts.items(), key= lambda item: item[1], reverse=True) [:50])
+        top = dict(sorted(counts.items(), key= lambda item: item[1], reverse=True) [:40])
         other_count = sum(counts.values()) - sum(top.values())
         top["Other"] = other_count
-
+        
         # Plotting
-        plt.bar(top.keys(), top.values())
-        plt.xlabel('Business Categories')
-        plt.ylabel('Number of Businesses')
-        plt.title(f'Top Kid-Friendly Businesses in {city}')
-        plt.xticks(rotation=45, ha='right')
-        plt.show()
+        Visualizations.plot_bar(top.keys(), top.values(), 'Business Categories', 'Number of Businesses', f'Top Kid-Friendly Businesses in {city}', rotation=45)
 
