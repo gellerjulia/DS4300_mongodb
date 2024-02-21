@@ -1,0 +1,17 @@
+1. Businesses per State
+While a bit hard to tell, in the barchart Arizona has about 30,000 buinsesses represented in the dataset while 
+California has 2 and South Carolina has 1. This is surprising as we would have thought the dataset represents businesses 
+across the entire US that are in Yelp's database. It is important to know which states have their businesses represented in 
+this dataset to know for which people this data could be most useful for. Further, this graph is well suited for instances when 
+the full yelp dataset can be obtained to understand the geographic distribution of records in the dataset.
+
+2. Number of Businesses for each Type
+The graph shows that the most common types of businsses in the dataset are resturants, shopping, and health and medical.
+ While resutrants ebing commmon is unsurprising, it is more surprising that health and medical businesses have a high representaiton on yelp.
+ Further, it is interesting that food, sandwiches, and restaurants are three distinct categories and show how detailed this attribute of
+ the data is and thus how well suited it is for specific queries. 
+
+ 3. Number of Businsses per City
+ The cities iwth the most businsses are Phoenix, Scotssdale, and Tempe. While Phoenix is less unsurprising, the other 
+ two are as I had not previously known they were large cities. North Scottsdale has the least amount of buinesses, which is
+ surprising given that Scottsdale had the second highest number of businesses. 
