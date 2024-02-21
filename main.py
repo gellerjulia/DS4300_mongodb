@@ -5,7 +5,10 @@ Created 17 Feb 2024
 Updated: 20 Feb 2024
 
 main.py:
-
+The main script that serves as an entry point to interact with the MongoDB database 
+and perform various queries. It initializes the 'MongoAPI' class, imports data into 
+the database, and provides a user-friendly interface for exploring different aspects 
+of the dataset through a set of predefined questions.
 """
 from mongo_api import MongoAPI
 from vis import Visualizations
